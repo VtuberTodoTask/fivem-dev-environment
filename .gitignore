@@ -1,0 +1,20 @@
+# 環境変数（秘密情報を含む）
+.env
+
+# Docker ボリュームデータ
+data/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# リソースフォルダ内のビルド成果物
+resources/*
+!resources/.gitkeep
