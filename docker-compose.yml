@@ -1,0 +1,66 @@
+services:
+  fivem:
+    image: spritsail/fivem:latest
+    container_name: fivem-server
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      # FiveM ゲームポート
+      - "${FIVEM_PORT:-30120}:30120"
+      - "${FIVEM_PORT:-30120}:30120/udp"
+      # txAdmin Web UI ポート
+      - "${TXADMIN_PORT:-40120}:40120"
+    volumes:
+      # FiveM サーバー設定
+      - fivem_config:/config
+      # txAdmin データ
+      - txdata:/txData
+      # リソースフォルダ（ホストのresourcesディレクトリをマウント）
+      - ./resources:/config/resources:ro
+    environment:
+      LICENSE_KEY: "${FIVEM_LICENSE_KEY}"
+      NO_DEFAULT_CONFIG: "1"
+      TXHOST_DATA_PATH: "/txData"
+    networks:
+      - fivem-network
+
+  mariadb:
+    image: mariadb:11
+    container_name: fivem-mariadb
+    restart: unless-stopped
+    ports:
+      - "${MARIADB_PORT:-3306}:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      # 初期化SQLスクリプト（初回起動時のみ実行）
+      - ./init-sql:/docker-entrypoint-initdb.d:ro
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-fivem_root_pass}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE:-fivem}"
+      MYSQL_USER: "${MYSQL_USER:-fivem}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:-fivem_pass}"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - fivem-network
+
+volumes:
+  fivem_config:
+    name: fivem-config
+  txdata:
+    name: fivem-txdata
+  mariadb_data:
+    name: fivem-mariadb-data
+
+networks:
+  fivem-network:
+    name: fivem-network
+    driver: bridge
