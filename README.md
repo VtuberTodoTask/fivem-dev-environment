@@ -87,6 +87,35 @@ docker compose down -v
 `resources/` ディレクトリにFiveM リソースを配置してください。
 このディレクトリは FiveM サーバーの `/config/resources` に読み取り専用でマウントされます。
 
+#### Qbox リソース一式を配置する場合
+
+[fivem_resources](https://github.com/VtuberTodoTask/fivem_resources) リポジトリの内容を `resources/` に配置します:
+
+```bash
+# resources/ ディレクトリに直接クローン
+git clone https://github.com/VtuberTodoTask/fivem_resources.git resources_tmp
+cp -r resources_tmp/* resources/
+rm -rf resources_tmp
+```
+
+配置後の `resources/` ディレクトリ構成:
+```
+resources/
+├── [assets]/
+├── [cfx-default]/
+├── [jg]/
+├── [npwd-apps]/
+├── [npwd]/
+├── [ox]/
+├── [qbx]/
+├── [standalone]/
+├── [vehicles]/
+├── [voice]/
+└── [wasabi]/
+```
+
+#### 個別のリソースを追加する場合
+
 ```bash
 # 例: renzu_garage を追加
 cd resources
