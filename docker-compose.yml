@@ -24,8 +24,8 @@ services:
       - fivem_config:/config
       # txAdmin データ
       - txdata:/txData
-      # リソースフォルダ（ホストのresourcesディレクトリをマウント）
-      - ./resources:/config/resources:ro
+      # リソースフォルダ（entrypoint.shでシンボリックリンク作成）
+      - ./resources:/resources:ro
     environment:
       NO_DEFAULT_CONFIG: "1"
     networks:
