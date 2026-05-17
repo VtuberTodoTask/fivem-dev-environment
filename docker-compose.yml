@@ -28,6 +28,8 @@ services:
       - ./resources:/resources:ro
     environment:
       NO_DEFAULT_CONFIG: "1"
+      PUID: "${PUID:-1000}"
+      PGID: "${PGID:-1000}"
     networks:
       - fivem-network
 

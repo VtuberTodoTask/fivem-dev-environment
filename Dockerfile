@@ -31,7 +31,11 @@ LABEL org.opencontainers.image.title="FiveM Dev Server" \
       org.opencontainers.image.version=${FIVEM_VERSION}
 
 COPY --from=builder /output/ /
-RUN apk add --no-cache tini
+RUN apk add --no-cache tini su-exec shadow \
+    && addgroup -g 1000 fivem \
+    && adduser -u 1000 -G fivem -D -h /config fivem \
+    && mkdir -p /config /txData \
+    && chown -R fivem:fivem /config /txData /opt/cfx-server-data
 
 WORKDIR /config
 EXPOSE 30120 40120

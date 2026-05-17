@@ -173,6 +173,31 @@ fivem-dev-environment/
 
 ## トラブルシューティング
 
+### Windows/WSL でファイルの権限エラーが出る
+
+`txData/` や `server-data/` 内のファイルを変更・移動できない場合、コンテナ内プロセスのUID/GIDがホストユーザーと一致していない可能性があります。
+
+`.env` で `PUID` / `PGID` をホストユーザーに合わせてください:
+
+```bash
+# WSL ターミナルで自分のUID/GIDを確認
+id -u  # → 例: 1000
+id -g  # → 例: 1000
+```
+
+`.env` に設定:
+```bash
+PUID=1000
+PGID=1000
+```
+
+設定後、コンテナを再起動してください:
+```bash
+docker compose down
+rm -rf server-data/ txData/   # 既存データを削除（権限修正のため）
+docker compose up -d --build
+```
+
 ### txAdmin にアクセスできない
 
 - `docker compose ps` でコンテナが起動しているか確認

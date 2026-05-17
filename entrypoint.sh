@@ -4,6 +4,27 @@ if [ -n "$DEBUG" ]; then
   set -x
 fi
 
+# UID/GID をホストユーザーに合わせる（PUID/PGID環境変数で指定可能）
+PUID="${PUID:-1000}"
+PGID="${PGID:-1000}"
+
+# 現在rootで実行中の場合、fivemユーザーのUID/GIDを変更してから再実行
+if [ "$(id -u)" = "0" ]; then
+  # fivemユーザーのUID/GIDを環境変数に合わせて変更
+  if [ "$(id -u fivem)" != "$PUID" ] || [ "$(id -g fivem)" != "$PGID" ]; then
+    groupmod -o -g "$PGID" fivem 2>/dev/null
+    usermod -o -u "$PUID" fivem 2>/dev/null
+  fi
+
+  # マウントされたディレクトリの所有権を変更
+  chown "$PUID:$PGID" /config /txData 2>/dev/null
+
+  # fivemユーザーとして再実行
+  exec su-exec fivem "$0" "$@"
+fi
+
+# --- 以降は fivem ユーザーとして実行 ---
+
 # /config が空の場合、デフォルト設定をコピー
 if [ -z "$(ls -A /config 2>/dev/null)" ]; then
   echo >&2 "Creating default configs..."
