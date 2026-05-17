@@ -3,6 +3,8 @@
 
 # Docker ボリュームデータ
 data/
+server-data/
+txData/
 
 # OS
 .DS_Store
