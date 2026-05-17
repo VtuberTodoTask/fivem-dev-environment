@@ -21,9 +21,9 @@ services:
       - "${TXADMIN_PORT:-40120}:40120"
     volumes:
       # FiveM サーバー設定
-      - fivem_config:/config
+      - ./server-data:/config
       # txAdmin データ
-      - txdata:/txData
+      - ./txData:/txData
       # リソースフォルダ（entrypoint.shでシンボリックリンク作成）
       - ./resources:/resources:ro
     environment:
@@ -56,10 +56,6 @@ services:
       - fivem-network
 
 volumes:
-  fivem_config:
-    name: fivem-config
-  txdata:
-    name: fivem-txdata
   mariadb_data:
     name: fivem-mariadb-data
 

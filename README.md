@@ -163,8 +163,13 @@ fivem-dev-environment/
 │   └── 00_init.sql
 ├── resources/            # FiveM リソース配置先
 │   └── .gitkeep
+├── server-data/          # FXServerデータ（自動生成・gitignore対象）
+├── txData/               # txAdmin設定・データ（自動生成・gitignore対象）
 └── README.md
 ```
+
+> `server-data/` と `txData/` は初回起動時に自動生成されます。
+> これらのディレクトリはホストに直接マウントされるため、コンテナを削除してもデータは保持されます。
 
 ## トラブルシューティング
 
@@ -192,8 +197,9 @@ docker compose up -d --build
 ### データをリセットしたい
 
 ```bash
-docker compose down -v  # ボリュームも含めて全て削除
-docker compose up -d    # 再起動（初期化SQLが再実行されます）
+docker compose down -v            # コンテナとDBボリュームを削除
+rm -rf server-data/ txData/       # FXServer・txAdminのデータを削除
+docker compose up -d --build      # 再起動（全て初期化されます）
 ```
 
 ## ライセンス
