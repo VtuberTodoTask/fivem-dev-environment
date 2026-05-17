@@ -1,6 +1,11 @@
 services:
   fivem:
-    image: spritsail/fivem:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        FIVEM_VERSION: "${FIVEM_VERSION:-29586-3284e7bf7ac848fcf3ccd51432279fdc3a76245b}"
+    image: fivem-dev:latest
     container_name: fivem-server
     restart: unless-stopped
     stdin_open: true
@@ -22,9 +27,7 @@ services:
       # リソースフォルダ（ホストのresourcesディレクトリをマウント）
       - ./resources:/config/resources:ro
     environment:
-      LICENSE_KEY: "${FIVEM_LICENSE_KEY}"
       NO_DEFAULT_CONFIG: "1"
-      TXHOST_DATA_PATH: "/txData"
     networks:
       - fivem-network
 

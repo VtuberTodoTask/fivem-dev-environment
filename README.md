@@ -7,7 +7,7 @@ Docker Compose を使用した FiveM (txAdmin) + MariaDB の開発環境です�
 
 | サービス | イメージ | 説明 | ポート |
 |---------|---------|------|-------|
-| `fivem` | [spritsail/fivem](https://hub.docker.com/r/spritsail/fivem) | FiveM サーバー + txAdmin | 30120 (ゲーム), 40120 (txAdmin UI) |
+| `fivem` | カスタムビルド (Dockerfile) | FiveM サーバー + txAdmin (FXServer 最新版) | 30120 (ゲーム), 40120 (txAdmin UI) |
 | `mariadb` | [mariadb:11](https://hub.docker.com/_/mariadb) | MariaDB データベース | 3306 |
 
 ## 前提条件
@@ -15,6 +15,7 @@ Docker Compose を使用した FiveM (txAdmin) + MariaDB の開発環境です�
 - [Docker](https://docs.docker.com/get-docker/) がインストール済み
 - [Docker Compose](https://docs.docker.com/compose/install/) v2 以上
 - FiveM ライセンスキー（[Cfx.re Keymaster](https://keymaster.fivem.net/) から無料で取得可能）
+  - ライセンスキーは txAdmin の Web UI から設定します
 
 ## セットアップ
 
@@ -31,19 +32,16 @@ cd fivem-dev-environment
 cp .env.example .env
 ```
 
-`.env` ファイルを編集し、少なくとも以下を設定してください:
-
-```env
-FIVEM_LICENSE_KEY=your-license-key-here
-```
+必要に応じて `.env` ファイルを編集してください。デフォルト設定のままでも起動できます。
 
 ### 3. 起動
 
 ```bash
-docker compose up -d
+docker compose up -d --build
 ```
 
 これだけで FiveM サーバー（txAdmin）と MariaDB が起動します。
+初回は Docker イメージのビルドが行われるため、数分かかる場合があります。
 
 ### 4. txAdmin の初期設定
 
@@ -126,6 +124,9 @@ mysql -h 127.0.0.1 -P 3306 -u fivem -pfivem_pass fivem
 
 ```
 fivem-dev-environment/
+├── Dockerfile            # FXServer カスタムビルド
+├── entrypoint.sh         # コンテナエントリポイント
+├── server.cfg            # FXServer デフォルト設定
 ├── docker-compose.yml    # Docker Compose 設定
 ├── .env.example          # 環境変数テンプレート
 ├── .env                  # 環境変数（gitignore対象）
@@ -143,6 +144,16 @@ fivem-dev-environment/
 - `docker compose ps` でコンテナが起動しているか確認
 - `docker compose logs fivem` でエラーログを確認
 - ファイアウォールでポート 40120 が開放されているか確認
+
+### FXServer のバージョンを変更したい
+
+`.env` に以下を追加して再ビルドしてください:
+
+```bash
+# バージョンは https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/ で確認
+FIVEM_VERSION=29586-3284e7bf7ac848fcf3ccd51432279fdc3a76245b
+docker compose up -d --build
+```
 
 ### MariaDB に接続できない
 
