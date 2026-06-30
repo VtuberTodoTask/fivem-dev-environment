@@ -50,7 +50,7 @@ docker compose up -d --build
 3. サーバーの `server.cfg` にデータベース接続文字列を追加:
 
 ```cfg
-set mysql_connection_string "mysql://fivem:fivem_pass@fivem-mariadb:3306/fivem?charset=utf8mb4"
+set mysql_connection_string "mysql://fivem:fivem_pass@mariadb:3306/fivem?charset=utf8mb4"
 ```
 
 > **注意:** ユーザー名・パスワード・データベース名は `.env` の設定に合わせてください。
